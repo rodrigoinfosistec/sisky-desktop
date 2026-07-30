@@ -23,10 +23,16 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install --yes
-        shell: bash
+        run: npm install
 
-      - name: Build
+      - name: Build (Windows)
+        if: matrix.os == 'windows-latest'
+        run: echo y | npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build (Linux/Mac)
+        if: matrix.os != 'windows-latest'
         run: npm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
