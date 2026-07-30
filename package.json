@@ -1,0 +1,29 @@
+{
+  "name": "sisky-desktop",
+  "version": "1.0.0",
+  "description": "Sisky — Soluções Inteligentes",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.sisky.desktop",
+    "productName": "Sisky",
+    "linux": {
+      "target": "AppImage"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  },
+  "author": "Rodrigo Freitas",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^36.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}
