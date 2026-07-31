@@ -13,6 +13,10 @@
     "appId": "com.sisky.desktop",
     "productName": "Sisky",
     "icon": "assets/icon-512.png",
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
+    },
     "linux": {
       "target": "AppImage",
       "icon": "assets/icon-512.png"
