@@ -1,12 +1,13 @@
 {
   "name": "sisky-desktop",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Sisky — Soluções Inteligentes",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
-    "build:icons": "node scripts/build-icons.js"
+    "build:icons": "node scripts/build-icons.js",
+    "release": "node scripts/release.js"
   },
   "build": {
     "appId": "com.sisky.desktop",
