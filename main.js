@@ -1,10 +1,21 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
+let store;
 const APP_VERSION = app.getVersion();
 
-function createWindow() {
+async function getStore() {
+    if (!store) {
+        const { default: Store } = await import('electron-store');
+        store = new Store();
+    }
+    return store;
+}
+
+async function createWindow() {
+    const s = await getStore();
+
     const win = new BrowserWindow({
         width: 1280,
         height: 800,
@@ -14,15 +25,24 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js'),
         },
         title: 'Sisky',
     });
 
-    win.loadURL(`https://default.sisky.com.br?appVersion=${APP_VERSION}`);
+    const subdomain = s.get('subdomain');
+
+    if (!subdomain) {
+        win.loadFile('setup.html');
+    } else {
+        win.loadURL(`https://${subdomain}.sisky.com.br?appVersion=${APP_VERSION}`);
+    }
+
+    return win;
 }
 
-app.whenReady().then(() => {
-    createWindow();
+app.whenReady().then(async () => {
+    await createWindow();
 
     setTimeout(() => {
         autoUpdater.checkForUpdatesAndNotify();
@@ -35,6 +55,13 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
+});
+
+ipcMain.on('set-subdomain', async (event, subdomain) => {
+    const s = await getStore();
+    s.set('subdomain', subdomain);
+    const win = BrowserWindow.getFocusedWindow();
+    win.loadURL(`https://${subdomain}.sisky.com.br?appVersion=${APP_VERSION}`);
 });
 
 autoUpdater.on('update-available', () => {
