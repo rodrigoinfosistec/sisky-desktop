@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
 function createWindow() {
@@ -7,7 +8,7 @@ function createWindow() {
         height: 800,
         minWidth: 900,
         minHeight: 600,
-        icon: path.join(__dirname, 'assets/icon.png'),
+        icon: path.join(__dirname, 'assets/icon-512.png'),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -21,6 +22,11 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow();
 
+    // Verifica atualizações após 3 segundos
+    setTimeout(() => {
+        autoUpdater.checkForUpdatesAndNotify();
+    }, 3000);
+
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
@@ -28,4 +34,27 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
+});
+
+// Eventos do auto-updater
+autoUpdater.on('update-available', () => {
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'Atualização disponível',
+        message: 'Uma nova versão do Sisky está disponível. Será baixada em background.',
+        buttons: ['OK'],
+    });
+});
+
+autoUpdater.on('update-downloaded', () => {
+    dialog.showMessageBox({
+        type: 'info',
+        title: 'Atualização pronta',
+        message: 'A atualização foi baixada. O Sisky será reiniciado para aplicar.',
+        buttons: ['Reiniciar agora', 'Mais tarde'],
+    }).then((result) => {
+        if (result.response === 0) {
+            autoUpdater.quitAndInstall();
+        }
+    });
 });
