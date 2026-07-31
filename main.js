@@ -2,6 +2,8 @@ const { app, BrowserWindow, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
+const APP_VERSION = app.getVersion();
+
 function createWindow() {
     const win = new BrowserWindow({
         width: 1280,
@@ -16,13 +18,12 @@ function createWindow() {
         title: 'Sisky',
     });
 
-    win.loadURL('https://default.sisky.com.br');
+    win.loadURL(`https://default.sisky.com.br?appVersion=${APP_VERSION}`);
 }
 
 app.whenReady().then(() => {
     createWindow();
 
-    // Verifica atualizações após 3 segundos
     setTimeout(() => {
         autoUpdater.checkForUpdatesAndNotify();
     }, 3000);
@@ -36,7 +37,6 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
 
-// Eventos do auto-updater
 autoUpdater.on('update-available', () => {
     dialog.showMessageBox({
         type: 'info',
