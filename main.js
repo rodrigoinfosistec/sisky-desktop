@@ -7,15 +7,14 @@ function createWindow() {
         height: 800,
         minWidth: 900,
         minHeight: 600,
+        icon: path.join(__dirname, 'assets/icon.png'),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
         },
-        titleBarStyle: 'hiddenInset',
         title: 'Sisky',
     });
 
-    // Carrega o sisky-web em produção
     win.loadURL('https://default.sisky.com.br');
 }
 
